@@ -25,6 +25,7 @@
     "gps": "0.4.1",
     "luma.gl": "5.0.2",
     "mapbox-gl": "0.44.0",
+    "prop-types": "15.6.0",
     "react": "16.2.0",
     "react-dom": "16.2.0",
     "react-map-gl": "3.2.1",

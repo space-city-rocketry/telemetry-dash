@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import ReactMapGL from 'react-map-gl';
 import DeckGL, { LineLayer, ScatterplotLayer } from 'deck.gl';
 
@@ -39,14 +40,14 @@ export default class Map extends React.Component {
 
         this.props.socket.on('gps data', (gps_data) => {
             const newData = [...this.state.data];
-            const sp = this.state.data[this.state.data.length - 1];
             newData.push(gps_data);
             if (newData.length > this.state.history) {
                 newData.shift();
             }
             this.setState({ data: newData });
 
-            if (this.state.data.length > 0) {
+            if (newData.length > 2) {
+                const sp = newData[newData.length - 2];
                 const tp = gps_data;
                 const newSegments = [...this.state.segments];
                 newSegments.push({
@@ -87,10 +88,11 @@ export default class Map extends React.Component {
     }
 
     render() {
+        const lastDataPoint = this.state.data[this.state.data.length - 1];
         const layers = [
             new ScatterplotLayer({
                 id: 'points',
-                data: [this.state.data[this.state.data.length - 1]],
+                data: lastDataPoint ? [lastDataPoint] : [],
                 radiusScale: 1,
                 getPosition: d => [d.lon, d.lat, d.alt],
                 getColor: d => [200, 16, 46],
@@ -118,3 +120,7 @@ export default class Map extends React.Component {
         );
     }
 }
+
+Map.propTypes = {
+    socket: PropTypes.any.isRequired
+};
