@@ -36,6 +36,7 @@ export default class Map extends React.Component {
 
         this.props.socket.on('mapbox token', (mapbox_token) => {
             this.setState({ mapboxApiAccessToken: mapbox_token });
+            console.log('received mapbox token', mapbox_token);
         });
 
         this.props.socket.on('gps data', (gps_data) => {
@@ -104,6 +105,10 @@ export default class Map extends React.Component {
                 strokeWidth: 5
             })
         ];
+        
+        if (this.state.mapboxApiAccessToken === '') {
+            return (<div/>);
+        }
 
         return (
             <ReactMapGL

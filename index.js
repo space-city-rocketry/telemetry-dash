@@ -69,6 +69,7 @@ io.on('connection', (socket) => {
     console.log('sent baud rate');
     socket.emit('baud rate', baud_rate);
     socket.emit('mapbox token', process.env.MAPBOX_TOKEN);
+    console.log('sent mapbox token');
 
     SerialPort.list().then((ports) => {
         console.log('sent serial ports');
