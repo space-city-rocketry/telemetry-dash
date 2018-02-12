@@ -17,14 +17,15 @@ function distanceSq(x0, y0, x1, y1) {
  * @returns {number} the height of the parabola at this ratio
  */
 function paraboloid(height, sx, sy, dx, dy, ratio) {
-    const x = mix(sx, dx, ratio);
-    const y = mix(sy, dy, ratio);
+    const err = 1e-4;
+    const x = mix(sx, dx, ratio) + err * Math.random();
+    const y = mix(sy, dy, ratio) + err * Math.random();
     const cx = mix(sx, dx, 0.5);
     const cy = mix(sy, dy, 0.5);
     const dSourceCenterSq = distanceSq(sx, sy, cx, cy);
     const dXYCenterSq = distanceSq(x, y, cx, cy);
     const z = -height * dXYCenterSq / dSourceCenterSq + height;
-    return [x, y, z];
+    return [x, y, z + err * Math.random()];
 }
 
 /**

@@ -34,9 +34,14 @@ function gps_tick() {
     if (nmea_i >= nmea_data.length) nmea_i = 0;
 }
 
-function serial_connect(socket) {
+function reset() {
     if (serial_port) serial_port.close();
     if (simulator_timer) clearInterval(simulator_timer);
+    nmea_i = 0;
+}
+
+function serial_connect(socket) {
+    reset();
 
     // Handle special cases: no device, simulated device
     if (serial_device === '') return;
@@ -99,7 +104,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        if (serial_port) serial_port.close();
+        reset();
         console.log('client disconnected: closing serial port');
     });
 });
