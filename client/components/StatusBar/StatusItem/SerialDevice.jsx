@@ -42,7 +42,7 @@ export default class SerialDevice extends React.Component {
             <StatusItem
                 label="Serial Device"
                 value={
-                    <select onChange={this.selectDevice}>
+                    <select onChange={this.selectDevice.bind(this)}>
                         {this.state.devices}
                     </select>
                 }

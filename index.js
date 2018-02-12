@@ -24,9 +24,27 @@ let serial_port;
 let serial_device = '';
 let baud_rate = 9600;
 
+const SIMULATED_PARABOLIC_DATA_DEVICE = "[SIMULATED] Parabolic Flight";
+const gps_hz = 10;
+let simulator_timer = null;
+let nmea_i = 0;
+function gps_tick() {
+    gps.update(nmea_data[nmea_i]);
+    nmea_i += 1;
+    if (nmea_i >= nmea_data.length) nmea_i = 0;
+}
+
 function serial_connect(socket) {
     if (serial_port) serial_port.close();
+    if (simulator_timer) clearInterval(simulator_timer);
+
+    // Handle special cases: no device, simulated device
     if (serial_device === '') return;
+    if (serial_device === SIMULATED_PARABOLIC_DATA_DEVICE) {
+        console.log('simulating parabolic flight');
+        simulator_timer = setInterval(gps_tick, 1000 / gps_hz);
+        return;
+    }
 
     serial_port = new SerialPort(serial_device, { baudRate: baud_rate });
     const parser = serial_port.pipe(new SerialPort.parsers.Readline({ delimiter: '\r\n' }));
@@ -46,16 +64,6 @@ function serial_connect(socket) {
     });
 }
 
-const gps_hz = 10;
-let nmea_i = 0;
-function gps_tick() {
-    gps.update(nmea_data[nmea_i]);
-    nmea_i += 1;
-    if (nmea_i >= nmea_data.length) nmea_i = 0;
-}
-
-setInterval(gps_tick, 1000 / gps_hz);
-
 gps.on('data', (data) => {
     // console.log('gps data:', gps.state);
     // socket.emit('data', 'test');
@@ -73,6 +81,8 @@ io.on('connection', (socket) => {
 
     SerialPort.list().then((ports) => {
         console.log('sent serial ports');
+        ports.unshift({ "comName": '' });
+        ports.push({ 'comName': SIMULATED_PARABOLIC_DATA_DEVICE });
         socket.emit('serial ports', ports);
     });
 
