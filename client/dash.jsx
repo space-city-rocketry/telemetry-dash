@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import Layout from './components/Layout';
 
+/* global io:false */
 const socket = io();
 const app = document.getElementById('app');
 ReactDOM.render(<Layout socket={socket} />, app);
